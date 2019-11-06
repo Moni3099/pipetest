@@ -1,0 +1,21 @@
+node{
+    stage('Git CheckOut'){
+        git credentialsId: 'git-crede', url: 'https://github.com/Moni3099/my-app'
+        }
+    stage('Mvn Build'){
+        def mvnHome = tool name: 'maven-1', type: 'maven'
+        def mvnCMD = "${mvnHome}/bin/mvn"
+        sh "${mvnCMD} clean package"
+    }
+    stage('Docker build'){
+    sh 'docker build -t 35.184.104.128/test/tomcat:8.0 .'
+    }
+    stage('Docker push'){
+      withDockerRegistry(credentialsId: 'Har_pass', url: 'http://35.184.104.128'){
+          sh label: '', script: 'docker push 35.184.104.128/test/tomcat:8.0'
+}
+}
+}
+
+
+
